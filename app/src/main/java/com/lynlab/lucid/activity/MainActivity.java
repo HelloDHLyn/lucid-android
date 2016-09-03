@@ -15,6 +15,10 @@ import android.view.MenuItem;
 
 import com.lynlab.lucid.R;
 
+/**
+ * @author lyn
+ * @since 2016/09/03
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
