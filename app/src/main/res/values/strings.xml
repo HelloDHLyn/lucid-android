@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">루시드</string>
+    <string name="app_name_en">Lucid</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="email">이메일</string>
+    <string name="login">로그인</string>
 </resources>
