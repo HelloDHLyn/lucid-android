@@ -27,6 +27,15 @@ import retrofit2.Response;
  */
 public class ApplicationListFragment extends Fragment {
 
+    /**
+     * 애플리케이션 설치 상태 enum
+     */
+    private enum State {
+        NOT_INSTALLED,      // 미설치
+        NOT_LATEST,         // 설치되었으나 최신 버전 아님
+        INSTALLED,          // 최신 버전 설치됨
+    }
+
     private ApplicationAdapter adapter;
 
     @Nullable
@@ -88,6 +97,7 @@ public class ApplicationListFragment extends Fragment {
         @Override
         public void onBindViewHolder(ApplicationViewHolder holder, int position) {
             holder.bind(applications.get(position));
+            holder.statusTextView.setText("미설치");
         }
 
         @Override
@@ -104,11 +114,13 @@ public class ApplicationListFragment extends Fragment {
 
         TextView nameTextView;
         TextView packageTextView;
+        TextView statusTextView;
 
         public ApplicationViewHolder(View itemView) {
             super(itemView);
             nameTextView = (TextView) itemView.findViewById(R.id.item_application_name);
             packageTextView = (TextView) itemView.findViewById(R.id.item_application_package);
+            statusTextView = (TextView) itemView.findViewById(R.id.item_application_status);
         }
 
         public void bind(Application application) {

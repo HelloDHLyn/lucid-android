@@ -2,7 +2,10 @@ package com.lynlab.lucid.api;
 
 import android.content.Context;
 
+import com.lynlab.lucid.util.PreferenceUtil;
+
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -25,8 +28,17 @@ public class LucidApiManager {
         return instance;
     }
 
-    public LucidApiManager(Context context) {
-        OkHttpClient httpClient = new OkHttpClient.Builder().build();
+    public LucidApiManager(final Context context) {
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(chain -> {
+                    // 요청에 액세스 토큰을 추가
+                    final String accessToken = PreferenceUtil.getStringPreference(context, PreferenceUtil.KEY_ACCESS_TOKEN, "");
+                    Request request = chain.request().newBuilder()
+                            .header("X-Access-Token", accessToken)
+                            .build();
+
+                    return chain.proceed(request);
+                }).build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(JacksonConverterFactory.create())
