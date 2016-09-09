@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.lynlab.lucid.R;
 import com.lynlab.lucid.api.LucidApiManager;
 import com.lynlab.lucid.model.Application;
+import com.lynlab.lucid.util.ApplicationUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,21 @@ public class ApplicationListFragment extends Fragment {
             @Override
             public void onResponse(Call<List<Application>> call, Response<List<Application>> response) {
                 if (response.isSuccessful()) {
-                    adapter.setApplications(response.body());
+                    List<Application> applications = response.body();
+                    List<ApplicationViewModel> items = new ArrayList<>(applications.size());
+
+                    for (Application application : applications) {
+                        State state;
+                        if (ApplicationUtil.isApplicationInstalled(getContext(), application.getPackageName())) {
+                            state = State.INSTALLED;
+                        } else {
+                            state = State.NOT_INSTALLED;
+                        }
+
+                        items.add(new ApplicationViewModel(application, state));
+                    }
+
+                    adapter.setItems(items);
                     adapter.notifyDataSetChanged();
                 } else {
 
@@ -82,10 +97,10 @@ public class ApplicationListFragment extends Fragment {
 
     private class ApplicationAdapter extends RecyclerView.Adapter<ApplicationViewHolder> {
 
-        private List<Application> applications;
+        private List<ApplicationViewModel> items;
 
         public ApplicationAdapter() {
-            applications = new ArrayList<>();
+            items = new ArrayList<>();
         }
 
         @Override
@@ -96,17 +111,35 @@ public class ApplicationListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ApplicationViewHolder holder, int position) {
-            holder.bind(applications.get(position));
-            holder.statusTextView.setText("미설치");
+            holder.bind(items.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return applications.size();
+            return items.size();
         }
 
-        public void setApplications(List<Application> applications) {
-            this.applications = applications;
+        public void setItems(List<ApplicationViewModel> items) {
+            this.items = items;
+        }
+    }
+
+
+    private class ApplicationViewModel {
+        Application application;
+        State state;
+
+        public ApplicationViewModel(Application application, State state) {
+            this.application = application;
+            this.state = state;
+        }
+
+        public Application getApplication() {
+            return application;
+        }
+
+        public State getState() {
+            return state;
         }
     }
 
@@ -123,9 +156,23 @@ public class ApplicationListFragment extends Fragment {
             statusTextView = (TextView) itemView.findViewById(R.id.item_application_status);
         }
 
-        public void bind(Application application) {
-            nameTextView.setText(application.getName());
-            packageTextView.setText(application.getPackageName());
+        public void bind(ApplicationViewModel item) {
+            nameTextView.setText(item.getApplication().getName());
+            packageTextView.setText(item.getApplication().getPackageName());
+
+            String stateText;
+            switch (item.getState()) {
+                case INSTALLED:
+                    stateText = getString(R.string.application_state_installed);
+                    break;
+
+                case NOT_INSTALLED:
+                default:
+                    stateText = getString(R.string.application_state_not_installed);
+                    break;
+            }
+
+            statusTextView.setText(stateText);
         }
     }
 }
