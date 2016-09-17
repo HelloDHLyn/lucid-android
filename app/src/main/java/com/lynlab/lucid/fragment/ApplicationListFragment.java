@@ -1,5 +1,6 @@
 package com.lynlab.lucid.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,9 +12,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lynlab.lucid.R;
+import com.lynlab.lucid.activity.ApplicationDetailActivity;
 import com.lynlab.lucid.api.LucidApiManager;
 import com.lynlab.lucid.model.Application;
 import com.lynlab.lucid.util.ApplicationUtil;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +93,7 @@ public class ApplicationListFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<Application>> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }
@@ -145,20 +149,30 @@ public class ApplicationListFragment extends Fragment {
 
     private class ApplicationViewHolder extends RecyclerView.ViewHolder {
 
+        View itemView;
         TextView nameTextView;
         TextView packageTextView;
         TextView statusTextView;
 
         public ApplicationViewHolder(View itemView) {
             super(itemView);
+            this.itemView = itemView;
+
             nameTextView = (TextView) itemView.findViewById(R.id.item_application_name);
             packageTextView = (TextView) itemView.findViewById(R.id.item_application_package);
             statusTextView = (TextView) itemView.findViewById(R.id.item_application_status);
         }
 
         public void bind(ApplicationViewModel item) {
-            nameTextView.setText(item.getApplication().getName());
-            packageTextView.setText(item.getApplication().getPackageName());
+            Application application = item.getApplication();
+
+            itemView.setOnClickListener(view -> {
+                Intent intent = new Intent(getContext(), ApplicationDetailActivity.class);
+                intent.putExtra(ApplicationDetailActivity.KEY_EXTRA_APPLICATION, Parcels.wrap(application));
+                startActivity(intent);
+            });
+            nameTextView.setText(application.getName());
+            packageTextView.setText(application.getPackageName());
 
             String stateText;
             switch (item.getState()) {

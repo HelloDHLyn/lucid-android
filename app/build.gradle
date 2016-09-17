@@ -33,6 +33,9 @@ android {
         targetCompatibility 1.7
         sourceCompatibility 1.8
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -42,4 +45,5 @@ dependencies {
     compile 'com.android.support:design:24.2.0'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-jackson:2.1.0'
+    compile 'org.parceler:parceler:1.1.5'
 }

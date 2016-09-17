@@ -9,6 +9,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  * @author lyn
@@ -36,8 +37,10 @@ public class LucidApi {
          *
          * @return 배포 목록
          */
-        @GET("api/v1/releases")
-        Call<List<Application>> getRelease();
+        @GET("api/v1/releases/{package}")
+        Call<List<Release>> getReleasesOfPackage(
+                @Path("package") String packageName
+        );
 
 
         ////////// 계정 관련 API
