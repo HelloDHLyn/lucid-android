@@ -15,6 +15,7 @@ import com.lynlab.lucid.R;
 import com.lynlab.lucid.activity.ApplicationDetailActivity;
 import com.lynlab.lucid.api.LucidApiManager;
 import com.lynlab.lucid.model.Application;
+import com.lynlab.lucid.model.InstallState;
 import com.lynlab.lucid.util.ApplicationUtil;
 
 import org.parceler.Parcels;
@@ -31,15 +32,6 @@ import retrofit2.Response;
  * @since 2016/09/03
  */
 public class ApplicationListFragment extends Fragment {
-
-    /**
-     * 애플리케이션 설치 상태 enum
-     */
-    private enum State {
-        NOT_INSTALLED,      // 미설치
-        NOT_LATEST,         // 설치되었으나 최신 버전 아님
-        INSTALLED,          // 최신 버전 설치됨
-    }
 
     private ApplicationAdapter adapter;
 
@@ -74,11 +66,11 @@ public class ApplicationListFragment extends Fragment {
                     List<ApplicationViewModel> items = new ArrayList<>(applications.size());
 
                     for (Application application : applications) {
-                        State state;
+                        InstallState state;
                         if (ApplicationUtil.isApplicationInstalled(getContext(), application.getPackageName())) {
-                            state = State.INSTALLED;
+                            state = InstallState.INSTALLED;
                         } else {
-                            state = State.NOT_INSTALLED;
+                            state = InstallState.NOT_INSTALLED;
                         }
 
                         items.add(new ApplicationViewModel(application, state));
@@ -131,9 +123,9 @@ public class ApplicationListFragment extends Fragment {
 
     private class ApplicationViewModel {
         Application application;
-        State state;
+        InstallState state;
 
-        public ApplicationViewModel(Application application, State state) {
+        public ApplicationViewModel(Application application, InstallState state) {
             this.application = application;
             this.state = state;
         }
@@ -142,7 +134,7 @@ public class ApplicationListFragment extends Fragment {
             return application;
         }
 
-        public State getState() {
+        public InstallState getState() {
             return state;
         }
     }
